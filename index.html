@@ -1,0 +1,104 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <title>TEST WEB</title>
+    
+    <link rel="stylesheet" href="css/hrpc.css">
+    <link rel="stylesheet" href="css/hrpc2.css">
+    
+</head>
+
+<body>
+<section class="mint-page" id="mint-page">
+        <div class="container">
+            <div class="row">
+                <div class="mint-tm-bg-white-transparent">
+                    <div style="text-align: center;">
+                        <h2>SUWON MINT NOW!</h2>
+                        <h1>Wallet Control</h1>
+                        <button id="btnConnectWallet" onclick="connectWallet()" style="padding: 10px;"><h3 id="txtConnectWalletBtn">Connect Wallet</h3></button>
+                        <div id="walletInfo" style="display: none;">
+                            <a>Wallet Address : </a><a id="txtWalletAddress">-</a>
+                            <br>
+                            <a>Wallet balance : </a><a id="txtWalletBalance">-</a><a> Ether</a>
+                        </div>
+                    <div style="text-align: center;">
+                        <h1>NFT Count</h1>
+                        <p><a id="txtTotalSupply">-</a>/<a id="txtMaxSupply">-</a></p>
+                    </div>
+                    <div style="text-align: center;">
+                        <h1>Mint Price <br>0.0001 Ether+Gas fee</h1>
+                        <button id="btnMintAmount" style="width: 30px;" onclick="btnMintAmount('minus')">-</button><a
+                            id="txtMintAmount" style="margin: 15px;">1</a><button id="btnMintAmount" style="width: 30px; "
+                            onclick="btnMintAmount('plus')">+</button>
+                        <br>
+                        <button id="MintBtn" onclick="mint()" style="margin: 15px; border-radius: 10px;">
+                            <h3 id="txtMintBtn">Connect Wallet</h3>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <img id="main-humans" src="img/humans.png">
+        </div>
+</section>
+<section>
+<button id="checkOwnershipButton">오너쉽 확인</button>
+<script>
+    // web3.js 라이브러리를 불러옵니다.
+    const Web3 = window.Web3;
+
+    // 스마트 계약 주소
+    const ADDRESS = '0x5118F7500A8774951569feCa7E282614704dCB20';
+
+    // 웹3 인스턴스를 생성합니다.
+    const web3 = new Web3(Web3.givenProvider);
+
+    // 사용자의 메타마스크 지갑에 연결합니다.
+    async function connectWallet() {
+      try {
+        // 사용자의 지갑 연결 요청
+        await window.ethereum.enable();
+        console.log('메타마스크에 연결되었습니다.');
+
+        // 사용자의 지갑 주소를 가져옵니다.
+        const accounts = await web3.eth.getAccounts();
+        const userWalletAddress = accounts[0];
+
+        // 스마트 계약 인스턴스 생성
+        const contract = new web3.eth.Contract(ABI, smartcontract);
+
+        // NFT 오너쉽을 확인하는 로직
+        const isOwner = await contract.methods.isOwner(userWalletAddress).call();
+        if (isOwner) {
+          console.log('인증된 NFT 오너입니다.');
+          window.location.href = 'ownership.html';
+        } else {
+          console.log('NFT 오너가 아닙니다.');
+          // NFT 오너가 아닌 경우에 대한 처리를 추가하세요.
+          window.location.href = 'index.html'; // 예시로 에러 페이지로 이동하도록 설정했습니다.
+        }
+
+      } catch (error) {
+        console.error('메타마스크 연결에 실패했습니다.', error);
+      }
+    }
+
+    // 웹 페이지 로드 시, 사용자의 메타마스크 지갑에 연결합니다.
+    window.addEventListener('load', async () => {
+      // 메타마스크 설치 여부 확인
+      if (typeof window.ethereum !== 'undefined') {
+        await connectWallet();
+      } else {
+        console.error('메타마스크를 설치해야 합니다.');
+      }
+    });
+  </script>
+  </section>
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script type="text/javascript" src="smartcontract.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+</body>
+
+</html>
