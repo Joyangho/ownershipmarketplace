@@ -1,11 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Ownership</title>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script type="text/javascript" src="smartcontract.js"></script>
+    <script type="text/javascript" src="index.js"></script>
 </head>
 <body>
-    <h1>오너쉽 화면</h1>
+    <h1>Ownership Page</h1>
+    <p id="status">Metamask 연결됨</p>
+
+    <script>
+        // 주어진 코드의 변수를 참고하여 수정
+        var web3 = new Web3(window.ethereum);
+        var contract = new web3.eth.Contract(ABI, ADDRESS);
+        var WalletAddress = "";
+
+        async function getOwnedTokens(walletAddress) {
+            let balance = await contract.methods.balanceOf(walletAddress).call();
+            let tokenIds = [];
+
+            for (let i = 0; i < balance; i++) {
+                let tokenId = await contract.methods.tokenOfOwnerByIndex(walletAddress, i).call();
+                tokenIds.push(tokenId);
+            }
+
+            return tokenIds;
+        }
+
+        async function isOwner(walletAddress) {
+            let tokenIds = await getOwnedTokens(walletAddress);
+            
+            for (let tokenId of tokenIds) {
+                let ownerAddress = await contract.methods.ownerOf(tokenId).call();
+                if (ownerAddress === walletAddress) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        async function checkOwnership() {
+            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+            if (accounts.length === 0) {
+                document.getElementById('status').innerText = 'Metamask 연결 종료됨';
+                window.location.href = 'index.html';
+                return;
+            }
+
+            WalletAddress = accounts[0];
+            let tokenIds = await getOwnedTokens(WalletAddress);
+            if (tokenIds.length === 0) {
+                document.getElementById('status').innerText = 'Metamask 연결 종료됨';
+                window.location.href = 'index.html';
+                return;
+            }
+        }
+
+        if (window.ethereum) {
+            checkOwnership();
+
+            window.ethereum.on('accountsChanged', async function (accounts) {
+                if (accounts.length === 0) {
+                    document.getElementById('status').innerText = 'Metamask 연결 종료됨';
+                    window.location.href = 'index.html';
+                } else {
+                    WalletAddress = accounts[0];
+                    let tokenIds = await getOwnedTokens(WalletAddress);
+                    if (tokenIds.length === 0) {
+                        document.getElementById('status').innerText = 'Metamask 연결 종료됨';
+                        window.location.href = 'index.html';
+                    }
+                }
+            });
+        } else {
+            alert("You need Metamask first!");
+        }
+    </script>
 </body>
 </html>

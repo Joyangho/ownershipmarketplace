@@ -10,6 +10,14 @@
 </head>
 
 <body>
+
+  <button onclick="goToIndex2()">Go to Index2</button>
+  <script>
+    function goToIndex2() {
+      window.location.href = 'index2.html';
+    }
+  </script>
+    <button id="checkOwnershipButton">오너쉽 확인</button>
 <section class="mint-page" id="mint-page">
         <div class="container">
             <div class="row">
@@ -42,26 +50,6 @@
             <img id="main-humans" src="img/humans.png">
         </div>
 </section>
-<section>
-<button id="checkOwnershipButton">오너쉽 확인</button>
-<script>
-    // 웹 페이지 로드 시, 사용자의 메타마스크 지갑에 연결합니다.
-    window.addEventListener('load', async () => {
-      // 메타마스크 설치 여부 확인
-      if (typeof window.ethereum !== 'undefined') {
-        await connectWallet();
-      } else {
-        console.error('메타마스크를 설치해야 합니다.');
-      }
-    });
-
-    const checkOwnershipButton = document.getElementById('checkOwnershipButton');
-    checkOwnershipButton.addEventListener('click', async () => {
-      await connectWallet();
-    });
-
-  </script>
-  </section>
 
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <script type="text/javascript" src="smartcontract.js"></script>

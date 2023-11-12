@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ownership</title>
+</head>
+<body>
+  <h1>Ownership</h1>
+  <p>이 페이지는 인증된 NFT 오너만 접근할 수 있습니다.</p>
+
+  <button id="checkOwnershipButton">오너쉽 확인</button>
+  <button id="btnConnectWallet" onclick="connectWallet()" style="padding: 10px;"><h3 id="txtConnectWalletBtn">Connect Wallet</h3></button>
+
+  <script>
+    const Network = 5;
+    // web3.js 라이브러리를 불러옵니다.
+    const Web3 = window.Web3;
+
+    // 웹3 인스턴스를 생성합니다.
+    const web3 = new Web3(Web3.givenProvider);
+
+    // 사용자의 메타마스크 지갑에 연결합니다.
+    async function connectWallet() {
+      try {
+        // 사용자의 지갑 연결 요청
+        await window.ethereum.enable();
+        alert('메타마스크에 연결되었습니다.');
+
+        // 사용자의 지갑 주소를 가져옵니다.
+        const accounts = await web3.eth.getAccounts();
+        const userWalletAddress = accounts[0];
+
+        // NFT 오너쉽을 확인합니다.
+        await isOwner(userWalletAddress);
+
+      } catch (error) {
+        console.error('메타마스크 연결에 실패했습니다.', error);
+      }
+    }
+
+    // NFT 오너쉽을 확인하는 함수
+    async function isOwner(walletAddress) {
+      try {
+        // 스마트 계약 인스턴스 생성
+        const contract = new web3.eth.Contract(ABI, ADDRESS);
+
+        // NFT 오너쉽을 확인하는 로직
+        const isOwner = await contract.methods.isOwner(walletAddress).call();
+        if (isOwner) {
+          alert('인증된 NFT 오너입니다.');
+          window.location.href = 'ownership.html';
+        } else {
+          alert('NFT 오너가 아닙니다.');
+          // NFT 오너가 아닌 경우에 대한 처리를 추가하세요.
+          window.location.href = 'error.html'; // 예시로 에러 페이지로 이동하도록 설정했습니다.
+        }
+      } catch (error) {
+        console.error('NFT 오너쉽 확인에 실패했습니다.', error);
+      }
+    }
+
+    // 웹 페이지 로드 시, 사용자의 메타마스크 지갑에 연결합니다.
+    window.addEventListener('load', async () => {
+      // 메타마스크 설치 여부 확인
+      if (typeof window.ethereum !== 'undefined') {
+        const checkOwnershipButton = document.getElementById('checkOwnershipButton');
+        checkOwnershipButton.addEventListener('click', async () => {
+          const accounts = await web3.eth.getAccounts();
+          const userWalletAddress = accounts[0];
+          await isOwner(userWalletAddress);
+        });
+
+        const connectWalletButton = document.getElementById('connectWalletButton');
+        connectWalletButton.addEventListener('click', async () => {
+          await connectWallet();
+        });
+      } else {
+        alert('메타마스크를 설치해야 합니다.');
+      }
+    });
+  </script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script type="text/javascript" src="smartcontract.js"></script>
+</body>
+</html>
