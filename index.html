@@ -63,13 +63,13 @@
 
         // 사용자의 지갑 주소를 가져옵니다.
         const accounts = await web3.eth.getAccounts();
-        const userWalletAddress = accounts[0];
+        const txtWalletAddress = accounts[0];
 
         // 스마트 계약 인스턴스 생성
-        const contract = new web3.eth.Contract(ABI, smartcontract);
+        const contract = new web3.eth.Contract(ABI, ADDRESS);
 
         // NFT 오너쉽을 확인하는 로직
-        const isOwner = await contract.methods.isOwner(userWalletAddress).call();
+        const isOwner = await contract.methods.isOwner(txtWalletAddress).call();
         if (isOwner) {
           console.log('인증된 NFT 오너입니다.');
           window.location.href = 'ownership.html';
