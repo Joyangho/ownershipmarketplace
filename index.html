@@ -45,45 +45,6 @@
 <section>
 <button id="checkOwnershipButton">오너쉽 확인</button>
 <script>
-    // web3.js 라이브러리를 불러옵니다.
-    const Web3 = window.Web3;
-
-    // 스마트 계약 주소
-    const ADDRESS = '0x5118F7500A8774951569feCa7E282614704dCB20';
-
-    // 웹3 인스턴스를 생성합니다.
-    const web3 = new Web3(Web3.givenProvider);
-
-    // 사용자의 메타마스크 지갑에 연결합니다.
-    async function connectWallet() {
-      try {
-        // 사용자의 지갑 연결 요청
-        await window.ethereum.enable();
-        console.log('메타마스크에 연결되었습니다.');
-
-        // 사용자의 지갑 주소를 가져옵니다.
-        const accounts = await web3.eth.getAccounts();
-        const txtWalletAddress = accounts[0];
-
-        // 스마트 계약 인스턴스 생성
-        const contract = new web3.eth.Contract(ABI, ADDRESS);
-
-        // NFT 오너쉽을 확인하는 로직
-        const isOwner = await contract.methods.isOwner(txtWalletAddress).call();
-        if (isOwner) {
-          console.log('인증된 NFT 오너입니다.');
-          window.location.href = 'ownership.html';
-        } else {
-          console.log('NFT 오너가 아닙니다.');
-          // NFT 오너가 아닌 경우에 대한 처리를 추가하세요.
-          window.location.href = 'index.html'; // 예시로 에러 페이지로 이동하도록 설정했습니다.
-        }
-
-      } catch (error) {
-        console.error('메타마스크 연결에 실패했습니다.', error);
-      }
-    }
-
     // 웹 페이지 로드 시, 사용자의 메타마스크 지갑에 연결합니다.
     window.addEventListener('load', async () => {
       // 메타마스크 설치 여부 확인

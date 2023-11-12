@@ -113,4 +113,13 @@ async function mint() {
   } else {
     alert("You need Metamask first!");
   }
+  const isOwner = await contract.methods.isOwner(txtWalletAddress).call();
+  if (isOwner) {
+    console.log('인증된 NFT 오너입니다.');
+    window.location.href = 'ownership.html';
+  } else {
+    console.log('NFT 오너가 아닙니다.');
+    // NFT 오너가 아닌 경우에 대한 처리를 추가하세요.
+    window.location.href = 'index.html'; // 예시로 에러 페이지로 이동하도록 설정했습니다.
+  }
 }
